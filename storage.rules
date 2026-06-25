@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper to check authentication
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Plantation uploads rules
+    match /plantations/{allPaths} {
+      allow read: if isSignedIn();
+      
+      // Allow upload only if user is logged in, file size is under 5MB, and is an image
+      allow write: if isSignedIn() &&
+                   request.resource.size < 5 * 1024 * 1024 &&
+                   request.resource.contentType.matches('image/.*');
+    }
+  }
+}

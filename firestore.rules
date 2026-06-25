@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Core Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isRole(role) {
+      return isSignedIn() && getUserData().role == role;
+    }
+
+    // 1. Users Security
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isOwner(userId);
+      
+      // Prevent citizens from arbitrarily inflating their points balance
+      allow update: if isOwner(userId) && (
+        // Case A: Standard profile updates (points value is unchanged)
+        (!request.resource.data.diff(resource.data).affectedKeys().contains('points'))
+        ||
+        // Case B: Legitimate system transaction (points increase by exactly 100 for planting, or decrease by exactly 100 for voucher)
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['points']) &&
+          (
+            request.resource.data.points == resource.data.points + 100 || 
+            request.resource.data.points == resource.data.points - 100
+          )
+        )
+      );
+    }
+
+    // 2. Orders Security
+    match /orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      
+      allow update: if isSignedIn() && (
+        // Government: Can only confirm nursery pickup (only status and pickedUpAt can change)
+        (
+          isRole('government') && 
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'pickedUpAt']) &&
+          request.resource.data.status == 'picked_up'
+        )
+        ||
+        // Citizen: Can confirm plantation (must provide image and GPS coordinates)
+        (
+          resource.data.userId == request.auth.uid &&
+          resource.data.status == 'picked_up' &&
+          request.resource.data.status == 'planted' &&
+          request.resource.data.image != null &&
+          request.resource.data.gpsCoordinates != null
+        )
+      );
+    }
+
+    // 3. QR Codes Security
+    match /qrcodes/{qrId} {
+      allow read: if isSignedIn();
+      
+      // Citizen: Can generate code (userId must match, status must be 'active')
+      allow create: if isSignedIn() && 
+                    request.resource.data.userId == request.auth.uid &&
+                    request.resource.data.status == 'active';
+      
+      // Business: Can scan and redeem code (can only change status to 'redeemed' and set redeemedAt)
+      allow update: if isSignedIn() && 
+                    isRole('business') &&
+                    resource.data.status == 'active' &&
+                    request.resource.data.status == 'redeemed' &&
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'redeemedAt']) &&
+                    resource.data.businessId == request.auth.uid;
+    }
+  }
+}
