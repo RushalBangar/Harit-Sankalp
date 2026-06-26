@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { dbService } from '../firebase/dbService';
-import { Camera, MapPin, Calendar, Clock, Award, Leaf, ChevronRight } from 'lucide-react';
+import { Camera, MapPin, Calendar, Clock, Award, Leaf, ChevronRight, TreePine } from 'lucide-react';
 import CameraCapture from '../components/CameraCapture';
 
 export default function CitizenDashboard({ setActiveTab }) {
