@@ -9,21 +9,31 @@
   /* Core Nature-inspired Color Palette */
   --color-forest-50: #f2fcf5;
   --color-forest-100: #e2f8eb;
+  --color-forest-150: #d4f5e1;
   --color-forest-200: #c7f2d7;
   --color-forest-500: #10b981;
   --color-forest-600: #059669;
+  --color-forest-650: #05875d;
   --color-forest-700: #047857;
+  --color-forest-750: #056c4e;
   --color-forest-800: #065f46;
   --color-forest-900: #064e3b;
   --color-forest-950: #022c22;
 
   --color-earth-50: #fafaf9;
   --color-earth-100: #f5f5f4;
+  --color-earth-150: #ededec;
   --color-earth-200: #e7e5e4;
   --color-earth-300: #d6d3d1;
+  --color-earth-400: #a8a29e;
+  --color-earth-450: #8c8580;
+  --color-earth-455: #7c726a;
   --color-earth-500: #78716c;
   --color-earth-700: #44403c;
+  --color-earth-800: #2e2a27;
+  --color-earth-850: #24211f;
   --color-earth-900: #1c1917;
+  --color-earth-950: #0c0a09;
 
   --color-accent-gold: #f59e0b;
   --color-accent-amber: #d97706;
