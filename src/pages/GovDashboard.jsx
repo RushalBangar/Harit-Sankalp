@@ -35,7 +35,7 @@ export default function GovDashboard({ setActiveTab }) {
       setLoading(true);
       await dbService.updateOrderStatus(orderId, 'picked_up');
       showNotification(`Sapling (${plantName}) pickup confirmed for ${userName}.`, "success");
-      fetchOrders();
+      await fetchOrders();
     } catch (err) {
       showNotification("Pickup confirmation failed: " + err.message, "error");
     } finally {

@@ -118,7 +118,7 @@ export default function OrderSapling({ setActiveTab }) {
                     </div>
                     <div>
                       <span className="text-earth-400 block font-normal uppercase">Absorption</span>
-                      <span className="text-forest-600">{plant.co2Absorption.split(' ')[0]}</span>
+                      <span className="text-forest-600">{plant.co2Absorption?.split(' ')[0] || 'N/A'}</span>
                     </div>
                   </div>
                 </div>

@@ -11,7 +11,10 @@ export default function CitizenDashboard({ setActiveTab }) {
   const [activeVerifyOrder, setActiveVerifyOrder] = useState(null);
 
   const fetchOrders = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
     try {
       const data = await dbService.getOrders(currentUser.uid, 'citizen');
       setOrders(data.sort((a, b) => new Date(b.orderedAt) - new Date(a.orderedAt)));
