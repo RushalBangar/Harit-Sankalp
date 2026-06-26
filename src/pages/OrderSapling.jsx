@@ -70,8 +70,24 @@ export default function OrderSapling({ setActiveTab }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60svh]">
-        <div className="w-8 h-8 border-4 border-forest-200 border-t-forest-600 rounded-full animate-spin" />
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="skeleton h-8 w-56 mx-auto mb-3" />
+          <div className="skeleton h-4 w-80 mx-auto" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1,2,3].map(i => (
+            <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-forest-100/60">
+              <div className="skeleton h-44 w-full rounded-none" />
+              <div className="p-5 space-y-3">
+                <div className="skeleton h-5 w-3/4" />
+                <div className="skeleton h-3 w-full" />
+                <div className="skeleton h-3 w-5/6" />
+                <div className="skeleton h-8 w-full mt-4 rounded-xl" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -220,6 +236,26 @@ export default function OrderSapling({ setActiveTab }) {
           </div>
         </div>
       </div>
+
+      {/* Mobile sticky bottom bar — shown when a plant is selected */}
+      {selectedPlant && (
+        <div className="lg:hidden fixed bottom-16 left-0 right-0 z-40 px-4 pb-3 pt-2 bg-white/95 backdrop-blur-md border-t border-forest-100 shadow-2xl animate-fadeIn">
+          <div className="flex items-center gap-3 max-w-lg mx-auto">
+            <img src={selectedPlant.image} alt={selectedPlant.name} className="w-10 h-10 object-cover rounded-xl flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-earth-900 truncate">{selectedPlant.name}</p>
+              <p className="text-[10px] text-earth-400">Ready to order</p>
+            </div>
+            <button
+              onClick={handleOrder}
+              disabled={ordering}
+              className="inline-flex items-center justify-center px-4 py-2.5 bg-forest-600 hover:bg-forest-700 text-white rounded-xl text-xs font-bold shadow-md transition-colors cursor-pointer flex-shrink-0"
+            >
+              {ordering ? 'Confirming...' : 'Order Now'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

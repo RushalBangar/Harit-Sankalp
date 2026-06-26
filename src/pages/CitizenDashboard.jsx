@@ -61,8 +61,20 @@ export default function CitizenDashboard({ setActiveTab }) {
 
   if (loading && orders.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-[60svh]">
-        <div className="w-8 h-8 border-4 border-forest-200 border-t-forest-600 rounded-full animate-spin" />
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="skeleton h-36 w-full rounded-3xl mb-8" />
+        <div className="space-y-4">
+          {[1,2,3].map(i => (
+            <div key={i} className="bg-white p-5 rounded-2xl border border-earth-200 flex gap-4 items-center">
+              <div className="skeleton w-14 h-14 rounded-xl flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="skeleton h-4 w-1/2" />
+                <div className="skeleton h-3 w-3/4" />
+              </div>
+              <div className="skeleton h-8 w-28 rounded-lg" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

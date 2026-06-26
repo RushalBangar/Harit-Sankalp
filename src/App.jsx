@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Navbar from './components/Navbar';
+import BottomNav from './components/BottomNav';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import CitizenDashboard from './pages/CitizenDashboard';
@@ -104,11 +105,15 @@ function AppContent() {
     }
   };
 
+  const showBottomNav = !!currentUser;
+
   return (
     <div className="min-h-screen bg-earth-50 flex flex-col justify-between">
-      {/* Floating Notification */}
+      {/* Floating Notification — bottom on mobile (above bottom nav), top-right on desktop */}
       {notification && (
-        <div className={`fixed top-5 right-5 z-[9999] max-w-sm w-full p-4 border rounded-2xl shadow-xl flex gap-3 items-center animate-fadeIn ${getNotificationStyles(notification.type)}`}>
+        <div className={`fixed z-[9999] max-w-sm w-[calc(100%-2rem)] p-4 border rounded-2xl shadow-xl flex gap-3 items-center animate-fadeIn
+          bottom-[4.5rem] left-4 md:bottom-auto md:top-5 md:right-5 md:left-auto md:w-full
+          ${getNotificationStyles(notification.type)}`}>
           {getNotificationIcon(notification.type)}
           <span className="text-xs font-semibold leading-relaxed">{notification.message}</span>
         </div>
@@ -117,10 +122,17 @@ function AppContent() {
       {/* Navigation Header */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Page view container */}
-      <main className="flex-grow">
-        {renderPage()}
+      {/* Page view container — extra bottom padding on mobile for bottom nav */}
+      <main className={`flex-grow ${showBottomNav ? 'pb-20 md:pb-0' : ''}`}>
+        <div className="animate-fadeIn">
+          {renderPage()}
+        </div>
       </main>
+
+      {/* Mobile Bottom Nav */}
+      {showBottomNav && (
+        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      )}
     </div>
   );
 }
