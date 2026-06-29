@@ -19,143 +19,145 @@ const CYCLE_NODES = [
 
 function GreenCycleVisual() {
   return (
-    <div
-      className="animate-slide-up-delay-2 relative select-none"
-      style={{ width: 380, height: 380, flexShrink: 0 }}
-    >
-      {/* SVG — ring, dots, labels */}
-      <svg
-        width="380" height="380" viewBox="0 0 380 380"
-        className="absolute inset-0"
-        aria-label="The Green Cycle — four programme steps"
+    <div className="relative w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] flex items-center justify-center overflow-visible my-6 lg:my-0">
+      <div
+        className="animate-slide-up-delay-2 relative select-none scale-[0.78] sm:scale-100 origin-center shrink-0"
+        style={{ width: 380, height: 380 }}
       >
-        <defs>
-          {/* Glow filter for travelling dot */}
-          <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="5" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          {/* Radial gradient for centre backdrop */}
-          <radialGradient id="centreGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stopColor="rgba(16,185,129,0.10)" />
-            <stop offset="100%" stopColor="rgba(16,185,129,0)" />
-          </radialGradient>
-          {/* Full-circle motion path starting at top node (190,80) */}
-          <path id="ringPath" d="M190,80 A110,110 0 1,1 189.9999,80" fill="none" />
-        </defs>
-
-        {/* Ambient centre glow */}
-        <circle cx="190" cy="190" r="160" fill="url(#centreGrad)" />
-
-        {/* Outermost decorative dashed ring */}
-        <circle cx="190" cy="190" r="148"
-          fill="none" stroke="rgba(16,185,129,0.05)"
-          strokeWidth="1" strokeDasharray="5 14" />
-
-        {/* Main ring track */}
-        <circle cx="190" cy="190" r="110"
-          fill="none" stroke="rgba(16,185,129,0.20)"
-          strokeWidth="1.5" />
-
-        {/* Inner guide ring */}
-        <circle cx="190" cy="190" r="68"
-          fill="none" stroke="rgba(16,185,129,0.07)"
-          strokeWidth="1" strokeDasharray="3 10" />
-
-        {/* Centre backdrop */}
-        <circle cx="190" cy="190" r="48"
-          fill="rgba(1,24,16,0.95)"
-          stroke="rgba(16,185,129,0.22)" strokeWidth="1" />
-
-        {/* Centre text */}
-        <text x="190" y="183" textAnchor="middle"
-          fontSize="7.5" fontWeight="700"
-          fill="rgba(52,211,153,0.75)" letterSpacing="2.5">THE</text>
-        <text x="190" y="193" textAnchor="middle"
-          fontSize="7.5" fontWeight="700"
-          fill="rgba(52,211,153,0.75)" letterSpacing="2.5">GREEN</text>
-        <text x="190" y="203" textAnchor="middle"
-          fontSize="7.5" fontWeight="700"
-          fill="rgba(52,211,153,0.75)" letterSpacing="2.5">CYCLE</text>
-
-        {/* Spoke lines (from inner ring to node junction) */}
-        <line x1="190" y1="142" x2="190" y2="84"  stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
-        <line x1="238" y1="190" x2="296" y2="190" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
-        <line x1="190" y1="238" x2="190" y2="296" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
-        <line x1="142" y1="190" x2="84"  y2="190" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
-
-        {/* Node junction circles on ring */}
-        {CYCLE_NODES.map(n => (
-          <circle key={n.id}
-            cx={n.cx} cy={n.cy} r="6"
-            fill="#011810" stroke="rgba(52,211,153,0.45)" strokeWidth="1.5" />
-        ))}
-
-        {/* Node labels — formal, short */}
-        {/* Top */}
-        <text x="190" y="57" textAnchor="middle"
-          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Claim</text>
-        <text x="190" y="69" textAnchor="middle"
-          fontSize="9" fill="rgba(52,211,153,0.55)">Free sapling</text>
-
-        {/* Right */}
-        <text x="318" y="186" textAnchor="start"
-          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Verify</text>
-        <text x="318" y="198" textAnchor="start"
-          fontSize="9" fill="rgba(52,211,153,0.55)">GPS + photo</text>
-
-        {/* Bottom */}
-        <text x="190" y="325" textAnchor="middle"
-          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Earn</text>
-        <text x="190" y="337" textAnchor="middle"
-          fontSize="9" fill="rgba(52,211,153,0.55)">100 pts / tree</text>
-
-        {/* Left */}
-        <text x="62" y="186" textAnchor="end"
-          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Redeem</text>
-        <text x="62" y="198" textAnchor="end"
-          fontSize="9" fill="rgba(52,211,153,0.55)">QR voucher</text>
-
-        {/* Primary animated dot (bright, glowing) */}
-        <circle r="6" fill="#34d399" filter="url(#dotGlow)">
-          <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#ringPath" />
-          </animateMotion>
-        </circle>
-
-        {/* Secondary trailing dot */}
-        <circle r="3.5" fill="rgba(52,211,153,0.40)">
-          <animateMotion dur="9s" begin="-3s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#ringPath" />
-          </animateMotion>
-        </circle>
-
-        {/* Tertiary trailing dot (very dim) */}
-        <circle r="2" fill="rgba(52,211,153,0.15)">
-          <animateMotion dur="9s" begin="-6s" repeatCount="indefinite" rotate="auto">
-            <mpath href="#ringPath" />
-          </animateMotion>
-        </circle>
-      </svg>
-
-      {/* Icon overlays — React components positioned on ring nodes */}
-      {CYCLE_NODES.map(n => (
-        <div
-          key={n.id}
-          className="absolute flex items-center justify-center rounded-xl"
-          style={{
-            width: 34, height: 34,
-            left: n.cx - 17, top: n.cy - 17,
-            background: 'rgba(1,18,12,0.97)',
-            border: '1.5px solid rgba(52,211,153,0.40)',
-          }}
+        {/* SVG — ring, dots, labels */}
+        <svg
+          width="380" height="380" viewBox="0 0 380 380"
+          className="absolute inset-0"
+          aria-label="The Green Cycle — four programme steps"
         >
-          <n.icon style={{ width: 16, height: 16 }} className="text-emerald-400" />
-        </div>
-      ))}
+          <defs>
+            {/* Glow filter for travelling dot */}
+            <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            {/* Radial gradient for centre backdrop */}
+            <radialGradient id="centreGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="rgba(16,185,129,0.10)" />
+              <stop offset="100%" stopColor="rgba(16,185,129,0)" />
+            </radialGradient>
+            {/* Full-circle motion path starting at top node (190,80) */}
+            <path id="ringPath" d="M190,80 A110,110 0 1,1 189.9999,80" fill="none" />
+          </defs>
+
+          {/* Ambient centre glow */}
+          <circle cx="190" cy="190" r="160" fill="url(#centreGrad)" />
+
+          {/* Outermost decorative dashed ring */}
+          <circle cx="190" cy="190" r="148"
+            fill="none" stroke="rgba(16,185,129,0.05)"
+            strokeWidth="1" strokeDasharray="5 14" />
+
+          {/* Main ring track */}
+          <circle cx="190" cy="190" r="110"
+            fill="none" stroke="rgba(16,185,129,0.20)"
+            strokeWidth="1.5" />
+
+          {/* Inner guide ring */}
+          <circle cx="190" cy="190" r="68"
+            fill="none" stroke="rgba(16,185,129,0.07)"
+            strokeWidth="1" strokeDasharray="3 10" />
+
+          {/* Centre backdrop */}
+          <circle cx="190" cy="190" r="48"
+            fill="rgba(1,24,16,0.95)"
+            stroke="rgba(16,185,129,0.22)" strokeWidth="1" />
+
+          {/* Centre text */}
+          <text x="190" y="183" textAnchor="middle"
+            fontSize="7.5" fontWeight="700"
+            fill="rgba(52,211,153,0.75)" letterSpacing="2.5">THE</text>
+          <text x="190" y="193" textAnchor="middle"
+            fontSize="7.5" fontWeight="700"
+            fill="rgba(52,211,153,0.75)" letterSpacing="2.5">GREEN</text>
+          <text x="190" y="203" textAnchor="middle"
+            fontSize="7.5" fontWeight="700"
+            fill="rgba(52,211,153,0.75)" letterSpacing="2.5">CYCLE</text>
+
+          {/* Spoke lines (from inner ring to node junction) */}
+          <line x1="190" y1="142" x2="190" y2="84"  stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+          <line x1="238" y1="190" x2="296" y2="190" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+          <line x1="190" y1="238" x2="190" y2="296" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+          <line x1="142" y1="190" x2="84"  y2="190" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+
+          {/* Node junction circles on ring */}
+          {CYCLE_NODES.map(n => (
+            <circle key={n.id}
+              cx={n.cx} cy={n.cy} r="6"
+              fill="#011810" stroke="rgba(52,211,153,0.45)" strokeWidth="1.5" />
+          ))}
+
+          {/* Node labels — formal, short */}
+          {/* Top */}
+          <text x="190" y="57" textAnchor="middle"
+            fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Claim</text>
+          <text x="190" y="69" textAnchor="middle"
+            fontSize="9" fill="rgba(52,211,153,0.55)">Free sapling</text>
+
+          {/* Right */}
+          <text x="318" y="186" textAnchor="start"
+            fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Verify</text>
+          <text x="318" y="198" textAnchor="start"
+            fontSize="9" fill="rgba(52,211,153,0.55)">GPS + photo</text>
+
+          {/* Bottom */}
+          <text x="190" y="325" textAnchor="middle"
+            fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Earn</text>
+          <text x="190" y="337" textAnchor="middle"
+            fontSize="9" fill="rgba(52,211,153,0.55)">100 pts / tree</text>
+
+          {/* Left */}
+          <text x="62" y="186" textAnchor="end"
+            fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Redeem</text>
+          <text x="62" y="198" textAnchor="end"
+            fontSize="9" fill="rgba(52,211,153,0.55)">QR voucher</text>
+
+          {/* Primary animated dot (bright, glowing) */}
+          <circle r="6" fill="#34d399" filter="url(#dotGlow)">
+            <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
+              <mpath href="#ringPath" />
+            </animateMotion>
+          </circle>
+
+          {/* Secondary trailing dot */}
+          <circle r="3.5" fill="rgba(52,211,153,0.40)">
+            <animateMotion dur="9s" begin="-3s" repeatCount="indefinite" rotate="auto">
+              <mpath href="#ringPath" />
+            </animateMotion>
+          </circle>
+
+          {/* Tertiary trailing dot (very dim) */}
+          <circle r="2" fill="rgba(52,211,153,0.15)">
+            <animateMotion dur="9s" begin="-6s" repeatCount="indefinite" rotate="auto">
+              <mpath href="#ringPath" />
+            </animateMotion>
+          </circle>
+        </svg>
+
+        {/* Icon overlays — React components positioned on ring nodes */}
+        {CYCLE_NODES.map(n => (
+          <div
+            key={n.id}
+            className="absolute flex items-center justify-center rounded-xl"
+            style={{
+              width: 34, height: 34,
+              left: n.cx - 17, top: n.cy - 17,
+              background: 'rgba(1,18,12,0.97)',
+              border: '1.5px solid rgba(52,211,153,0.40)',
+            }}
+          >
+            <n.icon style={{ width: 16, height: 16 }} className="text-emerald-400" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -196,7 +198,7 @@ function TickerStrip() {
 /* ═══════════════════════════════════════════════════════════════
    ANIMATED STAT COUNTER
 ═══════════════════════════════════════════════════════════════ */
-function AnimatedStat({ target, suffix = '', label, delay = 0 }) {
+function AnimatedStat({ target, suffix = '', label, delay = 0, isDarkBg = false }) {
   const [value, setValue] = useState(0);
   const ref = useRef(null);
   const started = useRef(false);
@@ -220,11 +222,13 @@ function AnimatedStat({ target, suffix = '', label, delay = 0 }) {
   }, [target]);
 
   return (
-    <div ref={ref} className="text-center py-4">
-      <div className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2 tabular-nums">
+    <div ref={ref} className="text-center py-2 md:py-4 px-1" style={{ animationDelay: `${delay}ms` }}>
+      <div className={`text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-1 tabular-nums ${isDarkBg ? 'text-white' : 'text-forest-800'}`}>
         {value.toLocaleString()}{suffix}
       </div>
-      <div className="text-[10px] uppercase tracking-[0.2em] text-forest-400 font-semibold">{label}</div>
+      <div className={`text-[8px] sm:text-[10px] uppercase tracking-wider md:tracking-[0.2em] font-semibold ${isDarkBg ? 'text-forest-400' : 'text-earth-500'}`}>
+        {label}
+      </div>
     </div>
   );
 }
@@ -378,14 +382,14 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
             </div>
 
             {/* Main headline */}
-            <h1 className="animate-hero-text-2 font-extrabold tracking-tight leading-[1.04] mb-6">
-              <span className="block text-5xl md:text-6xl lg:text-7xl text-white">
+            <h1 className="animate-hero-text-2 font-extrabold tracking-tight leading-[1.06] mb-6">
+              <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white">
                 Every Tree
               </span>
-              <span className="block text-5xl md:text-6xl lg:text-7xl text-emerald-400">
+              <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-emerald-400">
                 Planted.
               </span>
-              <span className="block text-3xl md:text-4xl lg:text-[2.6rem] font-light text-forest-300 mt-2">
+              <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-light text-forest-300 mt-2">
                 Every Pledge Honoured.
               </span>
             </h1>
@@ -399,7 +403,7 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
             </div>
 
             {/* Description */}
-            <p className="animate-hero-text-3 text-base text-forest-300 leading-relaxed mb-8 max-w-[480px] font-light">
+            <p className="animate-hero-text-3 text-sm sm:text-base text-forest-300 leading-relaxed mb-8 max-w-[480px] font-light">
               A government-backed platform where citizens plant verified trees, earn rewards, and local businesses participate — all GPS-confirmed and transparently recorded.
             </p>
 
@@ -414,16 +418,16 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
                   <div className="mt-0.5 flex-shrink-0 w-[18px] h-[18px] rounded-full bg-forest-800/80 border border-forest-700 flex items-center justify-center">
                     <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                   </div>
-                  {pt}
+                  <span className="leading-normal">{pt}</span>
                 </li>
               ))}
             </ul>
 
             {/* CTA buttons */}
-            <div className="animate-hero-text-4 flex flex-col sm:flex-row gap-3 items-start mb-10">
+            <div className="animate-hero-text-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-start mb-10">
               <button
                 onClick={onGetStarted}
-                className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-95"
+                className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-95 w-full sm:w-auto"
                 style={{
                   background: 'linear-gradient(135deg, #059669, #047857)',
                   boxShadow: '0 4px 24px rgba(5,150,105,0.38)',
@@ -434,24 +438,24 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
               </button>
               <a
                 href="#how-it-works"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-medium text-forest-300 border border-forest-700/60 hover:border-forest-500 hover:text-white transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-medium text-forest-300 border border-forest-700/60 hover:border-forest-500 hover:text-white transition-all duration-200 w-full sm:w-auto"
               >
                 How It Works <ArrowRight className="w-4 h-4" />
               </a>
             </div>
 
             {/* Inline quick stats */}
-            <div className="animate-hero-text-4 flex items-center gap-5 pt-6 border-t border-forest-800/50">
+            <div className="animate-hero-text-4 flex items-center justify-between sm:justify-start gap-4 sm:gap-6 pt-6 border-t border-forest-800/50">
               {[
                 { val: '1,250+', lbl: 'Trees Planted' },
                 { val: '45+',   lbl: 'Partners' },
                 { val: '98%',   lbl: 'Survival Rate' },
               ].map((s, i) => (
                 <React.Fragment key={s.lbl}>
-                  {i > 0 && <div className="w-px h-7 bg-forest-800" />}
+                  {i > 0 && <div className="w-px h-7 bg-forest-800 shrink-0" />}
                   <div>
-                    <div className="text-lg font-extrabold text-emerald-400 tabular-nums">{s.val}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-forest-500 font-semibold leading-tight mt-0.5">
+                    <div className="text-base sm:text-lg font-extrabold text-emerald-400 tabular-nums">{s.val}</div>
+                    <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-forest-500 font-semibold leading-tight mt-0.5">
                       {s.lbl}
                     </div>
                   </div>
@@ -565,10 +569,10 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 md:divide-x divide-forest-800">
-            <AnimatedStat target="1250" suffix="+" label="Trees Planted"           delay={0}   />
-            <AnimatedStat target="45"   suffix="+" label="Business Partners"       delay={150} />
-            <AnimatedStat target="98"   suffix="%" label="Plantation Survival Rate" delay={300} />
+          <div className="grid grid-cols-3 gap-2 md:gap-0 md:divide-x divide-forest-800">
+            <AnimatedStat target="1250" suffix="+" label="Trees Planted"           delay={0}   isDarkBg={true} />
+            <AnimatedStat target="45"   suffix="+" label="Business Partners"       delay={150} isDarkBg={true} />
+            <AnimatedStat target="98"   suffix="%" label="Plantation Survival Rate" delay={300} isDarkBg={true} />
           </div>
 
           <div className="mt-12 flex flex-col sm:flex-row gap-3 justify-center">
