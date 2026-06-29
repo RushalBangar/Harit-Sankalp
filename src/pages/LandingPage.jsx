@@ -1,344 +1,417 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Leaf, Users, Building2, ShieldCheck, ChevronRight,
   TreePine, Gift, Camera, Award, ArrowRight,
-  MapPin, CheckCircle2, Clock, Sparkles, QrCode, Star
+  CheckCircle2, Shield, TrendingUp, Zap, MapPin, Globe,
 } from 'lucide-react';
 
-/* ─────────────────────────────────────────────────────────────────
-   3D HERO CARD STACK  (right-side visual)
-   Three perspective-layered mini UI cards from the app.
-   Mouse parallax adds ±4° tilt on top of the base pose.
-──────────────────────────────────────────────────────────────────*/
-function HeroCardStack({ tilt }) {
-  const baseX = 10;
-  const baseY = -18;
-  const stackTransform = `perspective(1000px) rotateX(${baseX + tilt.x}deg) rotateY(${baseY + tilt.y}deg)`;
+/* ═══════════════════════════════════════════════════════════════
+   GREEN CYCLE — Animated SVG Ring Diagram
+   An Apple-Watch-style circular flow diagram showing the 4
+   programme steps. A glowing dot travels the ring continuously.
+═══════════════════════════════════════════════════════════════ */
+const CYCLE_NODES = [
+  { id: 'top',    cx: 190, cy: 80,  icon: TreePine, label: 'Claim',   sub: 'Free sapling'  },
+  { id: 'right',  cx: 300, cy: 190, icon: Camera,   label: 'Verify',  sub: 'GPS + photo'   },
+  { id: 'bottom', cx: 190, cy: 300, icon: Award,    label: 'Earn',    sub: '100 pts/tree'  },
+  { id: 'left',   cx: 80,  cy: 190, icon: Gift,     label: 'Redeem',  sub: 'QR vouchers'   },
+];
 
+function GreenCycleVisual() {
   return (
-    <div className="animate-card-entrance w-full max-w-[400px] mx-auto lg:mx-0">
-      <div
-        className="card-stack-3d relative"
-        style={{ height: 380, transform: stackTransform }}
+    <div
+      className="animate-slide-up-delay-2 relative select-none"
+      style={{ width: 380, height: 380, flexShrink: 0 }}
+    >
+      {/* SVG — ring, dots, labels */}
+      <svg
+        width="380" height="380" viewBox="0 0 380 380"
+        className="absolute inset-0"
+        aria-label="The Green Cycle — four programme steps"
       >
+        <defs>
+          {/* Glow filter for travelling dot */}
+          <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          {/* Radial gradient for centre backdrop */}
+          <radialGradient id="centreGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="rgba(16,185,129,0.10)" />
+            <stop offset="100%" stopColor="rgba(16,185,129,0)" />
+          </radialGradient>
+          {/* Full-circle motion path starting at top node (190,80) */}
+          <path id="ringPath" d="M190,80 A110,110 0 1,1 189.9999,80" fill="none" />
+        </defs>
 
-        {/* ── Card 3 — Back: Nursery Pickup ── */}
+        {/* Ambient centre glow */}
+        <circle cx="190" cy="190" r="160" fill="url(#centreGrad)" />
+
+        {/* Outermost decorative dashed ring */}
+        <circle cx="190" cy="190" r="148"
+          fill="none" stroke="rgba(16,185,129,0.05)"
+          strokeWidth="1" strokeDasharray="5 14" />
+
+        {/* Main ring track */}
+        <circle cx="190" cy="190" r="110"
+          fill="none" stroke="rgba(16,185,129,0.20)"
+          strokeWidth="1.5" />
+
+        {/* Inner guide ring */}
+        <circle cx="190" cy="190" r="68"
+          fill="none" stroke="rgba(16,185,129,0.07)"
+          strokeWidth="1" strokeDasharray="3 10" />
+
+        {/* Centre backdrop */}
+        <circle cx="190" cy="190" r="48"
+          fill="rgba(1,24,16,0.95)"
+          stroke="rgba(16,185,129,0.22)" strokeWidth="1" />
+
+        {/* Centre text */}
+        <text x="190" y="183" textAnchor="middle"
+          fontSize="7.5" fontWeight="700"
+          fill="rgba(52,211,153,0.75)" letterSpacing="2.5">THE</text>
+        <text x="190" y="193" textAnchor="middle"
+          fontSize="7.5" fontWeight="700"
+          fill="rgba(52,211,153,0.75)" letterSpacing="2.5">GREEN</text>
+        <text x="190" y="203" textAnchor="middle"
+          fontSize="7.5" fontWeight="700"
+          fill="rgba(52,211,153,0.75)" letterSpacing="2.5">CYCLE</text>
+
+        {/* Spoke lines (from inner ring to node junction) */}
+        <line x1="190" y1="142" x2="190" y2="84"  stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+        <line x1="238" y1="190" x2="296" y2="190" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+        <line x1="190" y1="238" x2="190" y2="296" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+        <line x1="142" y1="190" x2="84"  y2="190" stroke="rgba(16,185,129,0.08)" strokeWidth="1" />
+
+        {/* Node junction circles on ring */}
+        {CYCLE_NODES.map(n => (
+          <circle key={n.id}
+            cx={n.cx} cy={n.cy} r="6"
+            fill="#011810" stroke="rgba(52,211,153,0.45)" strokeWidth="1.5" />
+        ))}
+
+        {/* Node labels — formal, short */}
+        {/* Top */}
+        <text x="190" y="57" textAnchor="middle"
+          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Claim</text>
+        <text x="190" y="69" textAnchor="middle"
+          fontSize="9" fill="rgba(52,211,153,0.55)">Free sapling</text>
+
+        {/* Right */}
+        <text x="318" y="186" textAnchor="start"
+          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Verify</text>
+        <text x="318" y="198" textAnchor="start"
+          fontSize="9" fill="rgba(52,211,153,0.55)">GPS + photo</text>
+
+        {/* Bottom */}
+        <text x="190" y="325" textAnchor="middle"
+          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Earn</text>
+        <text x="190" y="337" textAnchor="middle"
+          fontSize="9" fill="rgba(52,211,153,0.55)">100 pts / tree</text>
+
+        {/* Left */}
+        <text x="62" y="186" textAnchor="end"
+          fontSize="11.5" fontWeight="700" fill="rgba(255,255,255,0.85)">Redeem</text>
+        <text x="62" y="198" textAnchor="end"
+          fontSize="9" fill="rgba(52,211,153,0.55)">QR voucher</text>
+
+        {/* Primary animated dot (bright, glowing) */}
+        <circle r="6" fill="#34d399" filter="url(#dotGlow)">
+          <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#ringPath" />
+          </animateMotion>
+        </circle>
+
+        {/* Secondary trailing dot */}
+        <circle r="3.5" fill="rgba(52,211,153,0.40)">
+          <animateMotion dur="9s" begin="-3s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#ringPath" />
+          </animateMotion>
+        </circle>
+
+        {/* Tertiary trailing dot (very dim) */}
+        <circle r="2" fill="rgba(52,211,153,0.15)">
+          <animateMotion dur="9s" begin="-6s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#ringPath" />
+          </animateMotion>
+        </circle>
+      </svg>
+
+      {/* Icon overlays — React components positioned on ring nodes */}
+      {CYCLE_NODES.map(n => (
         <div
-          className="animate-gentle-float-3 absolute w-full rounded-2xl px-5 py-4 border border-forest-700/50"
+          key={n.id}
+          className="absolute flex items-center justify-center rounded-xl"
           style={{
-            top: 40, right: -20,
-            transform: 'translateZ(-60px)',
-            background: 'rgba(6,50,36,0.75)',
-            backdropFilter: 'blur(8px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            width: 34, height: 34,
+            left: n.cx - 17, top: n.cy - 17,
+            background: 'rgba(1,18,12,0.97)',
+            border: '1.5px solid rgba(52,211,153,0.40)',
           }}
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-7 h-7 rounded-lg bg-forest-800 border border-forest-600 flex items-center justify-center">
-              <TreePine className="w-3.5 h-3.5 text-forest-400" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold text-forest-200">Sapling Pickup Ready</p>
-              <p className="text-[10px] text-forest-500">Govt. Nursery · Andheri</p>
-            </div>
-            <div className="ml-auto px-2 py-0.5 rounded-full bg-forest-700/60 text-[9px] font-bold text-forest-300 border border-forest-600/40">
-              PENDING
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-forest-400">Pickup Code:</span>
-            <span className="text-[11px] font-bold text-forest-200 tracking-widest font-mono">HS-4827</span>
-          </div>
+          <n.icon style={{ width: 16, height: 16 }} className="text-emerald-400" />
         </div>
+      ))}
+    </div>
+  );
+}
 
-        {/* ── Card 2 — Middle: GPS Capture ── */}
-        <div
-          className="animate-gentle-float-2 absolute w-full rounded-2xl px-5 py-4 border border-forest-600/40"
-          style={{
-            top: 20, right: -10,
-            transform: 'translateZ(-28px)',
-            background: 'rgba(3,40,28,0.85)',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
-          }}
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-7 h-7 rounded-lg bg-blue-900/60 border border-blue-700/50 flex items-center justify-center">
-              <Camera className="w-3.5 h-3.5 text-blue-400" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold text-white">Live Photo Captured</p>
-              <p className="text-[10px] text-forest-400">EXIF verification complete</p>
-            </div>
+/* ═══════════════════════════════════════════════════════════════
+   MARQUEE TICKER STRIP
+═══════════════════════════════════════════════════════════════ */
+const TICKER_ITEMS = [
+  { icon: Leaf,         text: 'GPS-Verified Plantation'        },
+  { icon: Shield,       text: 'Government-Backed Initiative'   },
+  { icon: TrendingUp,   text: '98% Plantation Survival Rate'   },
+  { icon: Zap,          text: 'Instant Reward Points'          },
+  { icon: MapPin,       text: 'Live Pickup Point Locator'      },
+  { icon: Globe,        text: 'City-Wide Partner Network'      },
+  { icon: CheckCircle2, text: 'Tamper-Proof Verification'      },
+  { icon: Award,        text: '100 Points Per Verified Tree'   },
+];
+
+function TickerStrip() {
+  const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS];
+  return (
+    <div className="overflow-hidden border-y border-earth-200 bg-earth-50 py-3.5 select-none">
+      <div className="animate-marquee flex gap-0 w-max">
+        {doubled.map((item, i) => (
+          <div key={i} className="inline-flex items-center gap-2.5 px-6 text-earth-600 shrink-0">
+            <item.icon className="w-3.5 h-3.5 text-forest-500 flex-shrink-0" />
+            <span className="text-[11px] font-semibold tracking-widest uppercase whitespace-nowrap">
+              {item.text}
+            </span>
+            <span className="text-earth-300 pl-4">·</span>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/8">
-              <p className="text-[9px] text-forest-500 mb-0.5 uppercase tracking-wider">Latitude</p>
-              <p className="text-[10px] font-semibold text-forest-200 font-mono">18.9220° N</p>
-            </div>
-            <div className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/8">
-              <p className="text-[9px] text-forest-500 mb-0.5 uppercase tracking-wider">Longitude</p>
-              <p className="text-[10px] font-semibold text-forest-200 font-mono">72.8347° E</p>
-            </div>
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <Clock className="w-3 h-3 text-forest-500" />
-            <span className="text-[10px] text-forest-400">29 Jun 2025 · 10:42 AM</span>
-          </div>
-        </div>
-
-        {/* ── Card 1 — Front: Verification Badge ── */}
-        <div
-          className="animate-gentle-float absolute w-full rounded-2xl overflow-hidden border border-forest-500/30"
-          style={{
-            top: 0, right: 0,
-            transform: 'translateZ(0px)',
-            background: 'rgba(2,30,20,0.95)',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 20px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(16,185,129,0.1)',
-          }}
-        >
-          {/* Top accent bar */}
-          <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #059669, #10b981, #34d399)' }} />
-          <div className="px-5 py-4">
-            {/* Header row */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-forest-800 border border-forest-600/60 flex items-center justify-center">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-white">Plantation Verified</p>
-                  <p className="text-[10px] text-forest-400">by Ward Officer, BMC</p>
-                </div>
-              </div>
-              <div className="px-2 py-1 rounded-full border border-emerald-700/60 bg-emerald-900/40 text-[9px] font-bold text-emerald-400 tracking-wider">
-                APPROVED
-              </div>
-            </div>
-
-            {/* Tree detail */}
-            <div className="flex items-center gap-3 p-3 rounded-xl mb-4"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div className="w-8 h-8 rounded-lg bg-forest-700/50 flex items-center justify-center flex-shrink-0">
-                <TreePine className="w-4 h-4 text-forest-300" />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-forest-100">Ficus benghalensis</p>
-                <p className="text-[9px] text-forest-500">Indigenous · National Tree of India</p>
-              </div>
-            </div>
-
-            {/* Points earned */}
-            <div className="flex items-center justify-between p-3 rounded-xl"
-              style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.2), rgba(16,185,129,0.1))', border: '1px solid rgba(16,185,129,0.2)' }}>
-              <div>
-                <p className="text-[9px] text-forest-400 uppercase tracking-wider mb-0.5">Reward Points Credited</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-extrabold text-emerald-400">+100</span>
-                  <span className="text-[10px] text-forest-400 font-medium">pts</span>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <span className="text-[9px] text-forest-500">Total: 450 pts</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Subtle drop shadow below stack */}
-        <div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-4 rounded-full blur-xl opacity-40 pointer-events-none"
-          style={{ background: 'rgba(16,185,129,0.3)', bottom: -16 }}
-          aria-hidden="true"
-        />
+        ))}
       </div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════
    ANIMATED STAT COUNTER
-──────────────────────────────────────────────────────────────────*/
-import { useEffect } from 'react';
+═══════════════════════════════════════════════════════════════ */
 function AnimatedStat({ target, suffix = '', label, delay = 0 }) {
   const [value, setValue] = useState(0);
   const ref = useRef(null);
   const started = useRef(false);
+
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
         started.current = true;
         const n = parseInt(target.replace(/\D/g, ''));
-        const stepTime = 20;
-        const steps = 1600 / stepTime;
-        let cur = 0;
-        const inc = n / steps;
+        let c = 0;
+        const inc = n / (1600 / 20);
         const timer = setInterval(() => {
-          cur += inc;
-          if (cur >= n) { setValue(n); clearInterval(timer); }
-          else setValue(Math.floor(cur));
-        }, stepTime);
+          c += inc;
+          if (c >= n) { setValue(n); clearInterval(timer); }
+          else setValue(Math.floor(c));
+        }, 20);
       }
     }, { threshold: 0.3 });
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [target]);
+
   return (
-    <div ref={ref} className="text-center" style={{ animationDelay: `${delay}ms` }}>
-      <div className="text-4xl md:text-5xl font-extrabold text-forest-700 tracking-tight mb-1 tabular-nums">
+    <div ref={ref} className="text-center py-4">
+      <div className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2 tabular-nums">
         {value.toLocaleString()}{suffix}
       </div>
-      <div className="text-xs uppercase tracking-widest text-earth-500 font-semibold mt-1">{label}</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-forest-400 font-semibold">{label}</div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   STAKEHOLDER CARD
-──────────────────────────────────────────────────────────────────*/
-function StakeholderCard({ icon: Icon, iconBg, iconColor, title, description, borderColor, delay }) {
-  return (
-    <div
-      className="animate-slide-up bg-white rounded-2xl p-8 border border-earth-200 shadow-sm hover:shadow-md transition-shadow duration-300"
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className={`w-12 h-12 rounded-xl ${iconBg} flex items-center justify-center mb-5 border ${borderColor}`}>
-        <Icon className={`w-6 h-6 ${iconColor}`} />
-      </div>
-      <h3 className="text-lg font-bold text-earth-900 mb-3">{title}</h3>
-      <p className="text-sm text-earth-500 leading-relaxed">{description}</p>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   PROCESS STEPS
-──────────────────────────────────────────────────────────────────*/
-const STEPS = [
-  { num: 1, icon: TreePine, title: 'Claim Sapling',   desc: 'Select an indigenous species and request pickup at your nearest government nursery.', delay: 0 },
-  { num: 2, icon: Camera,   title: 'Plant & Capture', desc: 'Plant the sapling and photograph it via live camera. GPS coordinates are captured automatically.', delay: 100 },
-  { num: 3, icon: Award,    title: 'Earn Points',     desc: 'Upon government verification, 100 green reward points are credited to your citizen profile.', delay: 200 },
-  { num: 4, icon: Gift,     title: 'Redeem Vouchers', desc: 'Exchange points for dynamic QR vouchers redeemable at registered partner establishments.', delay: 300 },
+/* ═══════════════════════════════════════════════════════════════
+   STAKEHOLDER CARD — information-dense, left-border accent
+═══════════════════════════════════════════════════════════════ */
+const STAKEHOLDERS = [
+  {
+    icon: Users, title: 'For Citizens',
+    description: 'Earn rewards while contributing to India\'s afforestation mission — one verified tree at a time.',
+    benefits: [
+      'Claim free indigenous saplings from registered nurseries',
+      'Upload GPS-tagged live photo for instant verification',
+      'Earn 100 reward points per approved plantation',
+      'Redeem points for QR codes at local partner businesses',
+    ],
+    accentHex: '#059669',
+    iconBg: 'bg-forest-50', iconColor: 'text-forest-700',
+    delay: 0,
+  },
+  {
+    icon: Building2, title: 'For Local Businesses',
+    description: 'Partner as a reward point and attract verified eco-citizens to your establishment at zero cost.',
+    benefits: [
+      'Register as a QR voucher redemption establishment',
+      'Receive targeted footfall from verified planters',
+      'Publicly display your environmental commitment',
+      'Manage active offers via your business dashboard',
+    ],
+    accentHex: '#2563eb',
+    iconBg: 'bg-blue-50', iconColor: 'text-blue-700',
+    delay: 80,
+  },
+  {
+    icon: ShieldCheck, title: 'For Government',
+    description: 'Oversee nursery inventory, verify citizen submissions, and access city-wide plantation data.',
+    benefits: [
+      'Configure nurseries and Pickup Point locations',
+      'Review GPS photo submissions for approval or rejection',
+      'Access real-time plantation and citizen dashboards',
+      'Maintain a tamper-resistant afforestation record',
+    ],
+    accentHex: '#d97706',
+    iconBg: 'bg-amber-50', iconColor: 'text-amber-700',
+    delay: 160,
+  },
 ];
 
-/* ─────────────────────────────────────────────────────────────────
+function StakeholderCard({ icon: Icon, title, description, benefits, accentHex, iconBg, iconColor, delay }) {
+  return (
+    <div
+      className="animate-slide-up bg-white rounded-2xl overflow-hidden border border-earth-200 shadow-sm hover:shadow-md transition-all duration-300 group"
+      style={{ animationDelay: `${delay}ms`, borderLeft: `3px solid ${accentHex}` }}
+    >
+      <div className="p-7">
+        <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-200`}>
+          <Icon style={{ width: 22, height: 22 }} className={iconColor} />
+        </div>
+        <h3 className="text-base font-bold text-earth-900 mb-2">{title}</h3>
+        <p className="text-sm text-earth-500 leading-relaxed mb-5">{description}</p>
+        <ul className="space-y-2.5">
+          {benefits.map((b, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-xs text-earth-600">
+              <CheckCircle2
+                className="w-3.5 h-3.5 flex-shrink-0 mt-0.5"
+                style={{ color: accentHex }}
+              />
+              {b}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROCESS STEPS
+═══════════════════════════════════════════════════════════════ */
+const STEPS = [
+  { num: 1, icon: TreePine, title: 'Claim Sapling',   desc: 'Select an indigenous species and request pickup at your nearest registered government nursery.', delay: 0 },
+  { num: 2, icon: Camera,   title: 'Plant & Capture', desc: 'Plant the sapling and photograph it using our live camera. GPS coordinates are validated automatically.', delay: 100 },
+  { num: 3, icon: Award,    title: 'Earn Points',     desc: 'Upon officer approval, 100 green reward points are instantly credited to your citizen profile.', delay: 200 },
+  { num: 4, icon: Gift,     title: 'Redeem Vouchers', desc: 'Exchange earned points for dynamic QR codes redeemable at any registered partner establishment.', delay: 300 },
+];
+
+/* ═══════════════════════════════════════════════════════════════
    MAIN LANDING PAGE
-──────────────────────────────────────────────────────────────────*/
+═══════════════════════════════════════════════════════════════ */
 export default function LandingPage({ setActiveTab, onGetStarted }) {
-  const heroRef = useRef(null);
-  const [cardTilt, setCardTilt] = useState({ x: 0, y: 0 });
-
-  /* Gentle mouse parallax — affects only the card stack tilt */
-  const handleMouseMove = useCallback((e) => {
-    const hero = heroRef.current;
-    if (!hero) return;
-    const rect = hero.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width;
-    const py = (e.clientY - rect.top) / rect.height;
-    setCardTilt({
-      x: (py - 0.5) * -8,   // ±4 deg vertical
-      y: (px - 0.5) *  8,   // ±4 deg horizontal
-    });
-  }, []);
-  const handleMouseLeave = useCallback(() => setCardTilt({ x: 0, y: 0 }), []);
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
 
-      {/* ══════════════════════════════════════════════════════════
-          HERO — split layout, 3D card stack right
-      ══════════════════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════
+          HERO  —  Split layout: text + cycle diagram
+      ══════════════════════════════════════════════════ */}
       <header
-        ref={heroRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
         className="relative overflow-hidden"
         style={{
-          background: 'linear-gradient(150deg, #011810 0%, #022c22 35%, #033a2c 65%, #053020 100%)',
-          minHeight: '92vh',
+          background: 'linear-gradient(150deg, #010f09 0%, #01180f 20%, #022c22 55%, #033a2c 80%, #041f14 100%)',
+          minHeight: '93vh',
         }}
       >
-        {/* ── Background Elements ── */}
-
-        {/* Fine dot matrix overlay */}
+        {/* Fine dot-grid texture */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-30"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
-            backgroundSize: '28px 28px',
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px)',
+            backgroundSize: '30px 30px',
           }}
           aria-hidden="true"
         />
 
-        {/* Perspective grid floor */}
-        <div className="perspective-grid pointer-events-none" aria-hidden="true" />
-
-        {/* Ambient top-right glow */}
+        {/* Soft radial glow — top right */}
         <div
-          className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, rgba(16,185,129,0.09) 0%, transparent 65%)' }}
+          className="absolute -top-48 -right-48 w-[700px] h-[700px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse, rgba(16,185,129,0.08) 0%, transparent 65%)' }}
+          aria-hidden="true"
+        />
+        {/* Soft radial glow — bottom left */}
+        <div
+          className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse, rgba(4,78,59,0.15) 0%, transparent 70%)' }}
           aria-hidden="true"
         />
 
-        {/* Thin diagonal accent line (decorative) */}
+        {/* Thin vertical separator line (desktop) */}
         <div
-          className="absolute pointer-events-none hidden lg:block"
+          className="absolute top-0 bottom-0 pointer-events-none hidden lg:block"
           style={{
-            top: '8%', right: '48%',
-            width: '1px', height: '80%',
-            background: 'linear-gradient(to bottom, transparent, rgba(16,185,129,0.15) 30%, rgba(16,185,129,0.15) 70%, transparent)',
+            left: '52%',
+            width: '1px',
+            background: 'linear-gradient(to bottom, transparent 5%, rgba(16,185,129,0.10) 30%, rgba(16,185,129,0.10) 70%, transparent 95%)',
           }}
           aria-hidden="true"
         />
 
-        {/* ── Two-column hero content ── */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 min-h-[92vh]">
+        {/* Content grid */}
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 flex flex-col lg:flex-row items-center gap-10 lg:gap-0 min-h-[93vh]">
 
-          {/* ── LEFT — Text Content ── */}
-          <div className="flex-1 text-white lg:max-w-[52%]">
+          {/* ─── LEFT: Text content ─── */}
+          <div className="flex-1 text-white lg:pr-16 lg:max-w-[54%]">
 
             {/* Ministry badge */}
-            <div className="animate-hero-text flex items-center gap-3 mb-7">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded border border-forest-700/70 bg-forest-900/60 text-xs font-semibold text-forest-200 tracking-wide">
+            <div className="animate-hero-text mb-8">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded border border-forest-700/60 bg-forest-900/50 text-[11px] font-semibold text-forest-200 tracking-[0.12em] uppercase">
                 <Leaf className="w-3 h-3 text-forest-400" />
-                Ministry of Environment · Civic Initiative
+                Ministry of Environment &nbsp;·&nbsp; Civic Initiative
               </div>
             </div>
 
-            {/* Headline */}
-            <h1 className="animate-hero-text-2 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] mb-4">
-              Harit Sankalp
+            {/* Main headline */}
+            <h1 className="animate-hero-text-2 font-extrabold tracking-tight leading-[1.04] mb-6">
+              <span className="block text-5xl md:text-6xl lg:text-7xl text-white">
+                Every Tree
+              </span>
+              <span className="block text-5xl md:text-6xl lg:text-7xl text-emerald-400">
+                Planted.
+              </span>
+              <span className="block text-3xl md:text-4xl lg:text-[2.6rem] font-light text-forest-300 mt-2">
+                Every Pledge Honoured.
+              </span>
             </h1>
-            <p className="animate-hero-text-2 text-xl md:text-2xl font-light text-forest-300 mb-5 tracking-wide">
-              A Citizens' Green Pledge Programme
-            </p>
 
-            {/* Divider */}
-            <div className="animate-hero-text-2 flex items-center gap-3 mb-7">
-              <div className="w-10 h-0.5 bg-forest-500" />
-              <span className="text-xs text-forest-500 uppercase tracking-widest font-semibold">Verified Afforestation Platform</span>
+            {/* Ruled divider */}
+            <div className="animate-hero-text-2 flex items-center gap-3 mb-6">
+              <div className="w-8 h-px bg-forest-600" />
+              <span className="text-[10px] uppercase tracking-[0.22em] text-forest-500 font-semibold">
+                Verified Afforestation Platform
+              </span>
             </div>
 
             {/* Description */}
-            <p className="animate-hero-text-3 text-sm md:text-base text-forest-300 leading-relaxed mb-8 max-w-lg font-light">
-              A structured initiative connecting citizens, local businesses, and government bodies to facilitate GPS-verified afforestation and incentivise community participation through a transparent reward system.
+            <p className="animate-hero-text-3 text-base text-forest-300 leading-relaxed mb-8 max-w-[480px] font-light">
+              A government-backed platform where citizens plant verified trees, earn rewards, and local businesses participate — all GPS-confirmed and transparently recorded.
             </p>
 
-            {/* Key points */}
-            <ul className="animate-hero-text-3 flex flex-col gap-3 mb-10">
+            {/* Feature checklist */}
+            <ul className="animate-hero-text-3 flex flex-col gap-3.5 mb-10">
               {[
                 'Free indigenous saplings from government nurseries',
-                'GPS-verified plantation with live camera proof',
-                'Earn reward points redeemable at partner businesses',
-              ].map((pt) => (
+                'GPS + live camera — tamper-proof, EXIF-verified',
+                'Reward points redeemable at certified partner businesses',
+              ].map(pt => (
                 <li key={pt} className="flex items-start gap-3 text-sm text-forest-200">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-forest-800 border border-forest-600 flex items-center justify-center mt-0.5">
+                  <div className="mt-0.5 flex-shrink-0 w-[18px] h-[18px] rounded-full bg-forest-800/80 border border-forest-700 flex items-center justify-center">
                     <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                   </div>
                   {pt}
@@ -346,45 +419,51 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
               ))}
             </ul>
 
-            {/* CTA Buttons */}
-            <div className="animate-hero-text-4 flex flex-col sm:flex-row gap-3 items-start">
+            {/* CTA buttons */}
+            <div className="animate-hero-text-4 flex flex-col sm:flex-row gap-3 items-start mb-10">
               <button
                 onClick={onGetStarted}
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white border border-forest-500 transition-all duration-200 cursor-pointer hover:bg-forest-500/20"
-                style={{ background: 'rgba(5,150,105,0.25)', backdropFilter: 'blur(8px)' }}
+                className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{
+                  background: 'linear-gradient(135deg, #059669, #047857)',
+                  boxShadow: '0 4px 24px rgba(5,150,105,0.38)',
+                }}
               >
                 Register / Sign In
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-150" />
               </button>
               <a
                 href="#how-it-works"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium text-forest-400 hover:text-forest-200 border border-forest-800 hover:border-forest-600 transition-all duration-200"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-medium text-forest-300 border border-forest-700/60 hover:border-forest-500 hover:text-white transition-all duration-200"
               >
-                How It Works
-                <ArrowRight className="w-4 h-4" />
+                How It Works <ArrowRight className="w-4 h-4" />
               </a>
             </div>
 
-            {/* Inline trust stats */}
-            <div className="animate-hero-text-4 mt-10 pt-8 border-t border-forest-800/60 grid grid-cols-3 gap-4">
+            {/* Inline quick stats */}
+            <div className="animate-hero-text-4 flex items-center gap-5 pt-6 border-t border-forest-800/50">
               {[
                 { val: '1,250+', lbl: 'Trees Planted' },
                 { val: '45+',   lbl: 'Partners' },
                 { val: '98%',   lbl: 'Survival Rate' },
-              ].map((s) => (
-                <div key={s.lbl}>
-                  <div className="text-xl font-extrabold text-emerald-400 tabular-nums">{s.val}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-forest-500 font-semibold mt-0.5">{s.lbl}</div>
-                </div>
+              ].map((s, i) => (
+                <React.Fragment key={s.lbl}>
+                  {i > 0 && <div className="w-px h-7 bg-forest-800" />}
+                  <div>
+                    <div className="text-lg font-extrabold text-emerald-400 tabular-nums">{s.val}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-forest-500 font-semibold leading-tight mt-0.5">
+                      {s.lbl}
+                    </div>
+                  </div>
+                </React.Fragment>
               ))}
             </div>
           </div>
 
-          {/* ── RIGHT — 3D Card Stack ── */}
-          <div className="flex-1 flex items-center justify-center lg:justify-end w-full lg:max-w-[48%]">
-            <HeroCardStack tilt={cardTilt} />
+          {/* ─── RIGHT: Green Cycle Diagram ─── */}
+          <div className="flex-1 flex items-center justify-center lg:justify-end lg:pl-8">
+            <GreenCycleVisual />
           </div>
-
         </div>
 
         {/* Bottom wave divider */}
@@ -395,73 +474,65 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
         </div>
       </header>
 
-      {/* ══════════════════════════════════════════════════════════
-          QUICK STATS STRIP
-      ══════════════════════════════════════════════════════════ */}
-      <section className="bg-white border-b border-earth-200">
-        <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-3 gap-8 divide-x divide-earth-200">
-          <AnimatedStat target="1250" suffix="+" label="Trees Planted"          delay={0}   />
-          <AnimatedStat target="45"   suffix="+" label="Business Partners"      delay={150} />
-          <AnimatedStat target="98"   suffix="%" label="Plantation Survival Rate" delay={300} />
-        </div>
-      </section>
+      {/* ══════════════════════════════════════════════════
+          MARQUEE TICKER
+      ══════════════════════════════════════════════════ */}
+      <TickerStrip />
 
-      {/* ══════════════════════════════════════════════════════════
-          WHO BENEFITS
-      ══════════════════════════════════════════════════════════ */}
-      <section className="bg-earth-50 py-20 px-6">
+      {/* ══════════════════════════════════════════════════
+          STAKEHOLDERS — Three Pillars
+      ══════════════════════════════════════════════════ */}
+      <section className="bg-white py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest text-forest-600 mb-2">Stakeholders</p>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-earth-900">Who Does This Serve?</h2>
-            <p className="text-sm text-earth-500 mt-2 max-w-lg">
-              Three distinct groups, each with clearly defined roles and benefits.
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-forest-600 mb-2">Stakeholders</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-earth-900 mb-2">
+              Three Pillars of the Programme
+            </h2>
+            <p className="text-sm text-earth-500 max-w-lg">
+              Each stakeholder has a defined role and a clear set of benefits within the Harit Sankalp ecosystem.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <StakeholderCard
-              icon={Users}    iconBg="bg-forest-50"  iconColor="text-forest-700" borderColor="border-forest-200"
-              title="For Citizens"
-              description="Claim free indigenous saplings, plant with GPS-verified photo evidence, and earn reward points redeemable at partner establishments."
-              delay={0}
-            />
-            <StakeholderCard
-              icon={Building2} iconBg="bg-blue-50"   iconColor="text-blue-700"   borderColor="border-blue-200"
-              title="For Local Businesses"
-              description="Partner as a discount provider for verified planters. Attract eco-conscious footfall and strengthen your community standing at no cost."
-              delay={80}
-            />
-            <StakeholderCard
-              icon={ShieldCheck} iconBg="bg-amber-50" iconColor="text-amber-700" borderColor="border-amber-200"
-              title="For Government Bodies"
-              description="Manage nursery inventory, configure Pickup Points, and track plantation progress through a verified, tamper-resistant digital record."
-              delay={160}
-            />
+            {STAKEHOLDERS.map(s => <StakeholderCard key={s.title} {...s} />)}
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════
-          HOW IT WORKS
-      ══════════════════════════════════════════════════════════ */}
-      <section id="how-it-works" className="bg-white py-20 px-6 scroll-mt-20">
+      {/* ══════════════════════════════════════════════════
+          HOW IT WORKS — Process Steps
+      ══════════════════════════════════════════════════ */}
+      <section id="how-it-works" className="bg-earth-50 py-20 px-6 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <div className="mb-14">
-            <p className="text-xs font-bold uppercase tracking-widest text-forest-600 mb-2">Process</p>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-earth-900">The Verification Cycle</h2>
-            <p className="text-sm text-earth-500 mt-2 max-w-lg">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-forest-600 mb-2">Process</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-earth-900 mb-2">
+              The Verification Cycle
+            </h2>
+            <p className="text-sm text-earth-500 max-w-lg">
               A transparent, four-stage workflow ensuring every planted tree is accountably recorded.
             </p>
           </div>
+
           <div className="relative grid grid-cols-1 md:grid-cols-4 gap-10">
-            <div className="hidden md:block absolute top-6 left-[12%] right-[12%] h-px bg-earth-200" aria-hidden="true" />
-            {STEPS.map((step) => (
-              <div key={step.num} className="animate-slide-up text-center relative group" style={{ animationDelay: `${step.delay}ms` }}>
+            {/* Connector line */}
+            <div
+              className="hidden md:block absolute top-6 h-px bg-earth-200"
+              style={{ left: '12.5%', right: '12.5%' }}
+              aria-hidden="true"
+            />
+
+            {STEPS.map(step => (
+              <div
+                key={step.num}
+                className="animate-slide-up text-center relative group"
+                style={{ animationDelay: `${step.delay}ms` }}
+              >
                 <div className="relative mx-auto mb-5 w-12 h-12">
-                  <div className="w-12 h-12 rounded-full bg-forest-50 border-2 border-forest-200 group-hover:border-forest-500 group-hover:bg-forest-100 flex items-center justify-center transition-all duration-200">
+                  <div className="w-12 h-12 rounded-full bg-white border-2 border-earth-200 group-hover:border-forest-500 group-hover:bg-forest-50 flex items-center justify-center transition-all duration-200 shadow-sm">
                     <step.icon className="w-5 h-5 text-forest-700" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-forest-700 flex items-center justify-center text-[9px] font-bold text-white">
+                  <div className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full bg-forest-700 flex items-center justify-center text-[9px] font-bold text-white">
                     {step.num}
                   </div>
                 </div>
@@ -473,43 +544,53 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════
-          IMPACT BANNER
-      ══════════════════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════
+          IMPACT — Animated Stats
+      ══════════════════════════════════════════════════ */}
       <section
-        className="py-16 px-6"
-        style={{ background: 'linear-gradient(160deg, #022c22 0%, #033a2c 100%)' }}
+        className="py-18 px-6"
+        style={{
+          background: 'linear-gradient(150deg, #011810 0%, #022c22 50%, #033a2c 100%)',
+          padding: '5rem 1.5rem',
+        }}
       >
-        <div className="max-w-4xl mx-auto text-center text-white">
-          <p className="text-xs font-bold uppercase tracking-widest text-forest-400 mb-3">Programme Mission</p>
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
-            Building a Verifiable Green Record for India
-          </h2>
-          <p className="text-sm text-forest-300 max-w-2xl mx-auto leading-relaxed">
-            Every tree planted is GPS-pinned, timestamped, and linked to a verified citizen identity — creating a transparent, community-driven afforestation record.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-forest-400 mb-3">Impact</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
+              Programme at a Glance
+            </h2>
+            <p className="text-sm text-forest-400 max-w-sm mx-auto">
+              Real numbers from our active citizen network across the city.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 md:divide-x divide-forest-800">
+            <AnimatedStat target="1250" suffix="+" label="Trees Planted"           delay={0}   />
+            <AnimatedStat target="45"   suffix="+" label="Business Partners"       delay={150} />
+            <AnimatedStat target="98"   suffix="%" label="Plantation Survival Rate" delay={300} />
+          </div>
+
+          <div className="mt-12 flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={onGetStarted}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-forest-950 bg-emerald-400 hover:bg-emerald-300 transition-colors duration-200 cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-forest-950 bg-emerald-400 hover:bg-emerald-300 transition-colors duration-200 cursor-pointer"
             >
-              Get Started
-              <ChevronRight className="w-4 h-4" />
+              Get Started <ChevronRight className="w-4 h-4" />
             </button>
             <a
               href="#how-it-works"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium text-forest-300 hover:text-white border border-forest-700 hover:border-forest-500 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium text-forest-300 border border-forest-700 hover:border-forest-500 hover:text-white transition-all duration-200"
             >
-              View Process
-              <ArrowRight className="w-4 h-4" />
+              View Process <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════
+      {/* ══════════════════════════════════════════════════
           FOOTER
-      ══════════════════════════════════════════════════════════ */}
+      ══════════════════════════════════════════════════ */}
       <footer className="border-t border-earth-200 bg-white py-8 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-earth-450">
           <div className="flex items-center gap-2">
@@ -518,7 +599,9 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
             <span className="text-earth-300">·</span>
             <span>Environmental Initiative</span>
           </div>
-          <p>© {new Date().getFullYear()} All Rights Reserved. Developed for grassroots afforestation &amp; civic partnership.</p>
+          <p>
+            © {new Date().getFullYear()} All Rights Reserved. Developed for grassroots afforestation &amp; civic partnership.
+          </p>
         </div>
       </footer>
     </div>
