@@ -104,3 +104,128 @@
   animation: shimmer 1.4s infinite linear;
   border-radius: 0.5rem;
 }
+
+/* ── Landing Page Animations ────────────────────────────────── */
+
+/* Aurora background gradient shift */
+@keyframes aurora {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-aurora {
+  background-size: 300% 300%;
+  animation: aurora 12s ease infinite;
+}
+
+/* Smooth floating up-down */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-18px) rotate(4deg); }
+}
+@keyframes floatY2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-24px) rotate(-6deg); }
+}
+@keyframes floatY3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  50%       { transform: translateY(-12px) rotate(8deg) scale(1.05); }
+}
+.animate-float  { animation: floatY  5s ease-in-out infinite; }
+.animate-float2 { animation: floatY2 7s ease-in-out infinite; }
+.animate-float3 { animation: floatY3 4s ease-in-out infinite; }
+
+/* 3D Orbit ring rotation */
+@keyframes orbitSpin {
+  from { transform: rotateX(70deg) rotateZ(0deg); }
+  to   { transform: rotateX(70deg) rotateZ(360deg); }
+}
+@keyframes orbitSpinReverse {
+  from { transform: rotateX(70deg) rotateZ(360deg); }
+  to   { transform: rotateX(70deg) rotateZ(0deg); }
+}
+.animate-orbit         { animation: orbitSpin 10s linear infinite; }
+.animate-orbit-reverse { animation: orbitSpinReverse 16s linear infinite; }
+
+/* Leaf particle fall */
+@keyframes leafFall {
+  0%   { transform: translateY(-40px) translateX(0) rotate(0deg);   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(110vh) translateX(60px) rotate(360deg); opacity: 0; }
+}
+.animate-leaf-fall { animation: leafFall linear infinite; }
+
+/* Slide-up entrance with fade */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up            { animation: slideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-up-delay-1    { animation: slideUp 0.7s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-up-delay-2    { animation: slideUp 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-up-delay-3    { animation: slideUp 0.7s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-up-delay-4    { animation: slideUp 0.7s 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Glow pulse for buttons/badges */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(52, 211, 153, 0.3), 0 0 30px rgba(52, 211, 153, 0.1); }
+  50%       { box-shadow: 0 0 20px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.25); }
+}
+.animate-glow-pulse { animation: glowPulse 3s ease-in-out infinite; }
+
+/* Number counter pop-in */
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.7) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-count-up { animation: countUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* Hero badge shimmer sweep */
+@keyframes badgeShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.animate-badge-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.15) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% auto;
+  animation: badgeShimmer 2.5s linear infinite;
+}
+
+/* Rotating gradient border on cards */
+@keyframes rotateBorder {
+  from { --gradient-angle: 0deg; }
+  to   { --gradient-angle: 360deg; }
+}
+
+/* Step connector pulse */
+@keyframes connectorPulse {
+  0%, 100% { opacity: 0.3; transform: scaleX(1); }
+  50%       { opacity: 1;   transform: scaleX(1.04); }
+}
+.animate-connector { animation: connectorPulse 2.5s ease-in-out infinite; }
+
+/* Perspective card tilt — applied via JS style prop */
+.hero-tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+.hero-tilt-card > * {
+  transform: translateZ(20px);
+}
+
+/* 3D floating orb */
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(15px, -20px) scale(1.06); }
+  66%       { transform: translate(-10px, 10px) scale(0.96); }
+}
+.animate-orb  { animation: orbFloat  8s ease-in-out infinite; }
+.animate-orb2 { animation: orbFloat 12s 2s ease-in-out infinite; }
+.animate-orb3 { animation: orbFloat  6s 4s ease-in-out infinite; }
+
