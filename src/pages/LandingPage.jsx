@@ -16,6 +16,13 @@ const RECENT_ACTIVITIES = [
   { citizen: 'Neha P.', tree: 'Mango (Mangifera indica)', loc: 'Navi Mumbai', time: '40 mins ago', points: 100 },
 ];
 
+const STEPS = [
+  { num: 1, icon: TreePine, title: 'Claim Sapling',   desc: 'Select an indigenous species and request pickup at your nearest registered government nursery.', delay: 0 },
+  { num: 2, icon: Camera,   title: 'Plant & Capture', desc: 'Plant the sapling and photograph it using our live camera. GPS coordinates are validated automatically.', delay: 100 },
+  { num: 3, icon: Award,    title: 'Earn Points',     desc: 'Upon officer approval, 100 green reward points are instantly credited to your citizen profile.', delay: 200 },
+  { num: 4, icon: Gift,     title: 'Redeem Vouchers', desc: 'Exchange earned points for dynamic QR codes redeemable at any registered partner establishment.', delay: 300 },
+];
+
 const STAKEHOLDER_CONSOLE = {
   citizen: {
     title: 'Citizen Protocol',
