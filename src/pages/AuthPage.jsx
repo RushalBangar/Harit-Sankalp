@@ -22,6 +22,7 @@ export default function AuthPage({ setActiveTab }) {
     setSubmitting(true);
 
     try {
+      let user;
       if (isRegister) {
         let extraDetails = {};
         if (role === 'business') {
@@ -31,15 +32,16 @@ export default function AuthPage({ setActiveTab }) {
             discount: discountDesc || '10% OFF'
           };
         }
-        await signup(email, password, role, name, extraDetails);
+        user = await signup(email, password, role, name, extraDetails);
       } else {
-        await login(email, password);
+        user = await login(email, password);
       }
 
-      // Redirect based on role
-      if (role === 'citizen') setActiveTab('dashboard');
-      else if (role === 'business') setActiveTab('business-dashboard');
-      else if (role === 'government') setActiveTab('gov-dashboard');
+      // Redirect based on actual user role
+      const redirectRole = user?.role;
+      if (redirectRole === 'citizen') setActiveTab('dashboard');
+      else if (redirectRole === 'business') setActiveTab('business-dashboard');
+      else if (redirectRole === 'government') setActiveTab('gov-dashboard');
       
     } catch (err) {
       console.error(err);
@@ -123,44 +125,46 @@ export default function AuthPage({ setActiveTab }) {
           </div>
 
           {/* Role selector */}
-          <div>
-            <label className="block text-xs font-semibold text-earth-700 uppercase mb-1">Account Role</label>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              <button
-                type="button"
-                onClick={() => setRole('citizen')}
-                className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
-                  role === 'citizen'
-                    ? 'bg-forest-100 border-forest-500 text-forest-800'
-                    : 'border-earth-300 text-earth-500 hover:bg-earth-100'
-                }`}
-              >
-                Citizen
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('business')}
-                className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
-                  role === 'business'
-                    ? 'bg-blue-100 border-blue-500 text-blue-800'
-                    : 'border-earth-300 text-earth-500 hover:bg-earth-100'
-                }`}
-              >
-                Business
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('government')}
-                className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
-                  role === 'government'
-                    ? 'bg-amber-100 border-accent-amber text-amber-800'
-                    : 'border-earth-300 text-earth-500 hover:bg-earth-100'
-                }`}
-              >
-                Government
-              </button>
+          {isRegister && (
+            <div>
+              <label className="block text-xs font-semibold text-earth-700 uppercase mb-1">Account Role</label>
+              <div className="grid grid-cols-3 gap-2 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setRole('citizen')}
+                  className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                    role === 'citizen'
+                      ? 'bg-forest-100 border-forest-500 text-forest-800'
+                      : 'border-earth-300 text-earth-500 hover:bg-earth-100'
+                  }`}
+                >
+                  Citizen
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('business')}
+                  className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                    role === 'business'
+                      ? 'bg-blue-100 border-blue-500 text-blue-800'
+                      : 'border-earth-300 text-earth-500 hover:bg-earth-100'
+                  }`}
+                >
+                  Business
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('government')}
+                  className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                    role === 'government'
+                      ? 'bg-amber-100 border-accent-amber text-amber-800'
+                      : 'border-earth-300 text-earth-500 hover:bg-earth-100'
+                  }`}
+                >
+                  Government
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Business-specific Fields */}
           {isRegister && role === 'business' && (

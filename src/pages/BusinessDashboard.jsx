@@ -38,7 +38,7 @@ export default function BusinessDashboard({ setActiveTab }) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Business Header */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-750 text-white rounded-3xl p-6 md:p-8 shadow-md mb-8">
+      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-3xl p-6 md:p-8 shadow-md mb-8">
         <span className="text-blue-300 text-xs font-bold uppercase tracking-wider">Business Dashboard</span>
         <h2 className="text-2xl md:text-3xl font-extrabold mt-1">{currentUser?.businessName}</h2>
         <p className="text-xs text-blue-200 font-light mt-1.5 flex items-center gap-1">

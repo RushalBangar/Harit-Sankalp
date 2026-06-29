@@ -40,7 +40,7 @@ export default function CitizenDashboard({ setActiveTab }) {
       // Update local state
       setActiveVerifyOrder(null);
       refreshUser();
-      fetchOrders();
+      await fetchOrders();
     } catch (error) {
       showNotification("Failed to upload verification: " + error.message, "error");
     } finally {

@@ -7,6 +7,7 @@ export default function GovDashboard({ setActiveTab }) {
   const { currentUser, showNotification } = useApp();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const fetchOrders = async () => {
     try {
@@ -81,46 +82,107 @@ export default function GovDashboard({ setActiveTab }) {
 
       {/* Registry Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white border border-earth-200 p-5 rounded-2xl flex items-center gap-4 shadow-sm">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
+        <button
+          onClick={() => setStatusFilter(statusFilter === 'ordered' ? 'all' : 'ordered')}
+          className={`text-left w-full bg-white border p-5 rounded-2xl flex items-center gap-4 transition-all hover:scale-102 hover:shadow-md cursor-pointer ${
+            statusFilter === 'ordered' ? 'border-accent-amber ring-2 ring-accent-amber/20' : 'border-earth-200 shadow-sm'
+          }`}
+        >
+          <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100 flex-shrink-0">
             <ClipboardList className="w-6 h-6 text-accent-amber" />
           </div>
           <div>
             <span className="text-[10px] text-earth-400 uppercase font-bold block">Awaiting Collection</span>
             <span className="text-2xl font-extrabold text-earth-900">{pendingCount}</span>
           </div>
-        </div>
+        </button>
 
-        <div className="bg-white border border-earth-200 p-5 rounded-2xl flex items-center gap-4 shadow-sm">
-          <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
+        <button
+          onClick={() => setStatusFilter(statusFilter === 'picked_up' ? 'all' : 'picked_up')}
+          className={`text-left w-full bg-white border p-5 rounded-2xl flex items-center gap-4 transition-all hover:scale-102 hover:shadow-md cursor-pointer ${
+            statusFilter === 'picked_up' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-earth-200 shadow-sm'
+          }`}
+        >
+          <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100 flex-shrink-0">
             <Calendar className="w-6 h-6 text-blue-600" />
           </div>
           <div>
             <span className="text-[10px] text-earth-400 uppercase font-bold block">Distributed & In-transit</span>
             <span className="text-2xl font-extrabold text-earth-900">{pickedUpCount}</span>
           </div>
-        </div>
+        </button>
 
-        <div className="bg-white border border-earth-200 p-5 rounded-2xl flex items-center gap-4 shadow-sm">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
+        <button
+          onClick={() => setStatusFilter(statusFilter === 'planted' ? 'all' : 'planted')}
+          className={`text-left w-full bg-white border p-5 rounded-2xl flex items-center gap-4 transition-all hover:scale-102 hover:shadow-md cursor-pointer ${
+            statusFilter === 'planted' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-earth-200 shadow-sm'
+          }`}
+        >
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100 flex-shrink-0">
             <TreePine className="w-6 h-6 text-emerald-600" />
           </div>
           <div>
             <span className="text-[10px] text-earth-400 uppercase font-bold block">Verified Planted</span>
             <span className="text-2xl font-extrabold text-forest-750">{plantedCount}</span>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* Sapling Orders Log */}
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="text-lg font-bold text-earth-900">Sapling Pickup Authorization</h3>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab('manage-inventory')}
+              className="inline-flex items-center text-xs font-bold text-amber-900 hover:text-white bg-amber-50 hover:bg-amber-700 px-4 py-2 rounded-xl transition-all cursor-pointer shadow-sm border border-amber-200"
+            >
+              Manage Nursery Stocks
+            </button>
+          </div>
+        </div>
+
+        {/* Filter Tab Buttons */}
+        <div className="flex flex-wrap gap-2 pb-2">
           <button
-            onClick={() => setActiveTab('manage-inventory')}
-            className="inline-flex items-center text-xs font-bold text-amber-900 hover:text-white bg-amber-50 hover:bg-amber-700 px-4 py-2 rounded-xl transition-all cursor-pointer shadow-sm border border-amber-200"
+            onClick={() => setStatusFilter('all')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+              statusFilter === 'all'
+                ? 'bg-amber-100 border-accent-amber text-amber-950'
+                : 'bg-white border-earth-200 text-earth-500 hover:bg-earth-50'
+            }`}
           >
-            Manage Nursery Stocks
+            All ({orders.length})
+          </button>
+          <button
+            onClick={() => setStatusFilter('ordered')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+              statusFilter === 'ordered'
+                ? 'bg-amber-100 border-accent-amber text-amber-950'
+                : 'bg-white border-earth-200 text-earth-500 hover:bg-earth-50'
+            }`}
+          >
+            Awaiting Pickup ({pendingCount})
+          </button>
+          <button
+            onClick={() => setStatusFilter('picked_up')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+              statusFilter === 'picked_up'
+                ? 'bg-blue-100 border-blue-500 text-blue-900'
+                : 'bg-white border-earth-200 text-earth-500 hover:bg-earth-50'
+            }`}
+          >
+            In-Transit ({pickedUpCount})
+          </button>
+          <button
+            onClick={() => setStatusFilter('planted')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+              statusFilter === 'planted'
+                ? 'bg-emerald-100 border-emerald-500 text-emerald-900'
+                : 'bg-white border-earth-200 text-earth-500 hover:bg-earth-50'
+            }`}
+          >
+            Verified Planted ({plantedCount})
           </button>
         </div>
 
@@ -132,9 +194,25 @@ export default function GovDashboard({ setActiveTab }) {
               Once citizens submit sapling orders, they will appear here for pickup verification.
             </p>
           </div>
+        ) : orders.filter(o => statusFilter === 'all' || o.status === statusFilter).length === 0 ? (
+          <div className="glass-panel text-center p-12 rounded-3xl border border-dashed border-earth-300">
+            <TreePine className="w-12 h-12 text-earth-300 mx-auto mb-3" />
+            <h4 className="text-base font-bold text-earth-700">No Matching Orders</h4>
+            <p className="text-xs text-earth-500 mt-1 max-w-sm mx-auto">
+              There are no orders matching the "{statusFilter === 'ordered' ? 'Awaiting Pickup' : statusFilter === 'picked_up' ? 'In-transit' : 'Planted'}" status.
+            </p>
+            <button
+              onClick={() => setStatusFilter('all')}
+              className="mt-4 px-3 py-1.5 bg-earth-200 hover:bg-earth-300 text-earth-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            >
+              Clear Filter
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {orders.map((order) => (
+            {orders
+              .filter(o => statusFilter === 'all' || o.status === statusFilter)
+              .map((order) => (
               <div 
                 key={order.id} 
                 className="bg-white p-5 rounded-2xl border border-earth-200 shadow-sm flex flex-col md:flex-row gap-5 items-start md:items-center justify-between"

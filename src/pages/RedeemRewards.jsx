@@ -115,7 +115,15 @@ export default function RedeemRewards({ setActiveTab }) {
               >
                 <div>
                   <div className="h-36 bg-earth-100 overflow-hidden relative">
-                    <img src={biz.image} alt={biz.name} className="w-full h-full object-cover" />
+                    <img 
+                      src={biz.image} 
+                      alt={biz.name} 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&auto=format&fit=crop&q=60';
+                      }}
+                    />
                     <span className="absolute bottom-3 left-3 bg-forest-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
                       {biz.category}
                     </span>

@@ -11,7 +11,7 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
         <div className="absolute -bottom-20 left-10 w-96 h-96 bg-forest-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-800/60 border border-forest-700/50 text-xs font-semibold text-forest-200 mb-6 animate-pulse">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-800/60 border border-forest-700/50 text-xs font-semibold text-forest-200 mb-6">
             <Leaf className="w-3.5 h-3.5 text-forest-400" />
             Empowering Green Initiatives
           </div>
@@ -30,7 +30,7 @@ export default function LandingPage({ setActiveTab, onGetStarted }) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
               onClick={onGetStarted}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 border border-transparent text-base font-semibold rounded-xl text-forest-950 bg-emerald-400 hover:bg-emerald-300 transition-all hover:scale-102 hover:shadow-lg shadow-md cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 border border-transparent text-base font-semibold rounded-xl text-forest-950 bg-emerald-400 hover:bg-emerald-300 transition-all hover:scale-105 hover:shadow-lg shadow-md cursor-pointer"
             >
               Get Started Today
               <ChevronRight className="w-5 h-5 ml-1" />

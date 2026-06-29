@@ -39,7 +39,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors cursor-pointer ${
+              className={`flex-1 relative flex flex-col items-center justify-center gap-1 py-3 transition-colors cursor-pointer ${
                 isActive
                   ? 'text-forest-600'
                   : 'text-earth-400 hover:text-forest-500'

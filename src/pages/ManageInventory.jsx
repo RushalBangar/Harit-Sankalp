@@ -62,6 +62,39 @@ export default function ManageInventory({ setActiveTab }) {
     }
   };
 
+  const handleSaveAllNurseryStocks = async (nurseryId) => {
+    const nursery = nurseries.find(n => n.id === nurseryId);
+    if (!nursery) return;
+
+    const updates = [];
+    plants.forEach(plant => {
+      const editKey = `${nurseryId}_${plant.id}`;
+      const currentQuantity = nursery.stock?.[plant.id] ?? 0;
+      const editingQuantity = editingStocks[editKey] ?? 0;
+      if (currentQuantity !== editingQuantity) {
+        updates.push({
+          plantId: plant.id,
+          quantity: editingQuantity
+        });
+      }
+    });
+
+    if (updates.length === 0) return;
+
+    setUpdating(true);
+    try {
+      await Promise.all(updates.map(up => 
+        dbService.updateNurseryStock(nurseryId, up.plantId, up.quantity)
+      ));
+      showNotification(`Successfully updated ${updates.length} stock levels for ${nursery.name}.`, "success");
+      loadData();
+    } catch (err) {
+      showNotification("Failed to update stock levels: " + err.message, "error");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60svh]">
@@ -91,7 +124,7 @@ export default function ManageInventory({ setActiveTab }) {
             className="bg-white rounded-3xl border border-earth-200 shadow-sm overflow-hidden"
           >
             {/* Nursery Head */}
-            <div className="bg-earth-50 px-6 py-4 border-b border-earth-200 flex flex-col md:flex-row justify-between md:items-center gap-2">
+            <div className="bg-earth-50 px-6 py-4 border-b border-earth-200 flex flex-col md:flex-row justify-between md:items-center gap-4">
               <div>
                 <h3 className="font-bold text-earth-900 text-lg flex items-center gap-1.5">
                   <ShieldCheck className="w-5 h-5 text-amber-700" />
@@ -99,8 +132,24 @@ export default function ManageInventory({ setActiveTab }) {
                 </h3>
                 <p className="text-xs text-earth-500 mt-0.5">{nursery.address}</p>
               </div>
-              <div className="text-xs text-earth-650 font-medium font-sans">
-                Contact: {nursery.contact}
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="text-xs text-earth-650 font-medium font-sans">
+                  Contact: {nursery.contact}
+                </div>
+                {plants.some(plant => {
+                  const currentQuantity = nursery.stock?.[plant.id] ?? 0;
+                  const editingQuantity = editingStocks[`${nursery.id}_${plant.id}`] ?? 0;
+                  return currentQuantity !== editingQuantity;
+                }) && (
+                  <button
+                    onClick={() => handleSaveAllNurseryStocks(nursery.id)}
+                    disabled={updating}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-700 hover:bg-amber-800 text-white shadow-sm transition-all cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    Save All Changes
+                  </button>
+                )}
               </div>
             </div>
 

@@ -113,7 +113,15 @@ export default function OrderSapling({ setActiveTab }) {
             >
               <div>
                 <div className="h-44 overflow-hidden relative bg-earth-100">
-                  <img src={plant.image} alt={plant.name} className="w-full h-full object-cover" />
+                  <img 
+                    src={plant.image} 
+                    alt={plant.name} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop&q=60';
+                    }}
+                  />
                   <span className="absolute top-3 left-3 bg-forest-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
                     {plant.category}
                   </span>
@@ -162,7 +170,15 @@ export default function OrderSapling({ setActiveTab }) {
               <div className="space-y-4 animate-fadeIn">
                 {/* Plant details */}
                 <div className="flex gap-3 items-center bg-forest-50/50 border border-forest-100 p-3 rounded-2xl">
-                  <img src={selectedPlant.image} alt={selectedPlant.name} className="w-12 h-12 object-cover rounded-xl" />
+                  <img 
+                    src={selectedPlant.image} 
+                    alt={selectedPlant.name} 
+                    className="w-12 h-12 object-cover rounded-xl" 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop&q=60';
+                    }}
+                  />
                   <div>
                     <h4 className="text-sm font-bold text-earth-900">{selectedPlant.name}</h4>
                     <span className="text-[10px] text-forest-600 font-bold flex items-center gap-1 mt-0.5">
@@ -239,9 +255,17 @@ export default function OrderSapling({ setActiveTab }) {
 
       {/* Mobile sticky bottom bar — shown when a plant is selected */}
       {selectedPlant && (
-        <div className="lg:hidden fixed bottom-16 left-0 right-0 z-40 px-4 pb-3 pt-2 bg-white/95 backdrop-blur-md border-t border-forest-100 shadow-2xl animate-fadeIn">
+        <div className="lg:hidden fixed bottom-20 left-0 right-0 z-40 px-4 pb-3 pt-2 bg-white/95 backdrop-blur-md border-t border-forest-100 shadow-2xl animate-fadeIn">
           <div className="flex items-center gap-3 max-w-lg mx-auto">
-            <img src={selectedPlant.image} alt={selectedPlant.name} className="w-10 h-10 object-cover rounded-xl flex-shrink-0" />
+            <img 
+              src={selectedPlant.image} 
+              alt={selectedPlant.name} 
+              className="w-10 h-10 object-cover rounded-xl flex-shrink-0" 
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop&q=60';
+              }}
+            />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-earth-900 truncate">{selectedPlant.name}</p>
               <p className="text-[10px] text-earth-400">Ready to order</p>

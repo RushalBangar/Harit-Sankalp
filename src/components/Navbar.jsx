@@ -36,9 +36,9 @@ export default function Navbar({ activeTab, setActiveTab }) {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             {/* Logo */}
-            <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('landing')}>
+            <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer group" onClick={() => setActiveTab('landing')}>
               <div className="w-10 h-10 rounded-xl bg-forest-100 flex items-center justify-center border border-forest-200">
-                <Leaf className="w-6 h-6 text-forest-600 animate-pulse" />
+                <Leaf className="w-6 h-6 text-forest-600 transition-transform group-hover:rotate-12 duration-200" />
               </div>
               <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-forest-700 to-forest-500 bg-clip-text text-transparent">
                 Harit Sankalp
@@ -163,6 +163,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
                   }}
                   className="p-2 rounded-lg hover:bg-red-50 text-earth-500 hover:text-red-600 transition-colors"
                   title="Sign Out"
+                  aria-label="Sign Out"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
@@ -187,6 +188,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-earth-500 hover:text-forest-600 hover:bg-forest-50 focus:outline-none"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

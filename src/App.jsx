@@ -112,7 +112,7 @@ function AppContent() {
       {/* Floating Notification — bottom on mobile (above bottom nav), top-right on desktop */}
       {notification && (
         <div className={`fixed z-[9999] max-w-sm w-[calc(100%-2rem)] p-4 border rounded-2xl shadow-xl flex gap-3 items-center animate-fadeIn
-          bottom-[4.5rem] left-4 md:bottom-auto md:top-5 md:right-5 md:left-auto md:w-full
+          bottom-24 left-4 md:bottom-auto md:top-5 md:right-5 md:left-auto md:w-full
           ${getNotificationStyles(notification.type)}`}>
           {getNotificationIcon(notification.type)}
           <span className="text-xs font-semibold leading-relaxed">{notification.message}</span>
