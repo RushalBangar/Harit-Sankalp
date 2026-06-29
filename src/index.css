@@ -229,3 +229,61 @@
 .animate-orb2 { animation: orbFloat 12s 2s ease-in-out infinite; }
 .animate-orb3 { animation: orbFloat  6s 4s ease-in-out infinite; }
 
+/* ── Formal 3D Hero ─────────────────────────────────────────── */
+
+/* Gentle card float — formal (very subtle travel) */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+.animate-gentle-float   { animation: gentleFloat 6s ease-in-out infinite; }
+.animate-gentle-float-2 { animation: gentleFloat 8s 1.5s ease-in-out infinite; }
+.animate-gentle-float-3 { animation: gentleFloat 7s 3s ease-in-out infinite; }
+
+/* Card stack entrance — slides in from right with perspective */
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) rotateX(10deg) rotateY(-15deg) translateX(60px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(10deg) rotateY(-15deg) translateX(0) scale(1);
+  }
+}
+.animate-card-entrance {
+  animation: cardEntrance 0.9s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hero text entrance (left side) */
+@keyframes heroTextIn {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-hero-text    { animation: heroTextIn 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-hero-text-2  { animation: heroTextIn 0.7s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-hero-text-3  { animation: heroTextIn 0.7s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-hero-text-4  { animation: heroTextIn 0.7s 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Perspective grid floor */
+.perspective-grid {
+  position: absolute;
+  bottom: 0;
+  left: -20%;
+  right: -20%;
+  height: 280px;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+  transform: perspective(500px) rotateX(55deg);
+  transform-origin: center bottom;
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+}
+
+/* Preserve 3D on card stack */
+.card-stack-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+}
