@@ -6,39 +6,39 @@
 @theme {
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   
-  /* Core Nature-inspired Color Palette */
-  --color-forest-50: #f2fcf5;
-  --color-forest-100: #e2f8eb;
-  --color-forest-150: #d4f5e1;
-  --color-forest-200: #c7f2d7;
-  --color-forest-500: #10b981;
-  --color-forest-600: #059669;
-  --color-forest-650: #05875d;
-  --color-forest-700: #047857;
-  --color-forest-750: #056c4e;
-  --color-forest-800: #065f46;
-  --color-forest-900: #064e3b;
-  --color-forest-950: #022c22;
+  /* Core Nature-inspired Color Palette — Royal Indigo & Cool Slate */
+  --color-forest-50: #f0f3ff;
+  --color-forest-100: #e0e7ff;
+  --color-forest-150: #c7d2fe;
+  --color-forest-200: #a5b4fc;
+  --color-forest-500: #6366f1;
+  --color-forest-600: #4f46e5;
+  --color-forest-650: #4338ca;
+  --color-forest-700: #3730a3;
+  --color-forest-750: #312e81;
+  --color-forest-800: #1e1b4b;
+  --color-forest-900: #0f0e26;
+  --color-forest-950: #080718;
 
-  --color-earth-50: #fafaf9;
-  --color-earth-100: #f5f5f4;
-  --color-earth-150: #ededec;
-  --color-earth-200: #e7e5e4;
-  --color-earth-300: #d6d3d1;
-  --color-earth-400: #a8a29e;
-  --color-earth-450: #8c8580;
-  --color-earth-455: #7c726a;
-  --color-earth-500: #78716c;
-  --color-earth-700: #44403c;
-  --color-earth-800: #2e2a27;
-  --color-earth-850: #24211f;
-  --color-earth-900: #1c1917;
-  --color-earth-950: #0c0a09;
+  --color-earth-50: #f8fafc;
+  --color-earth-100: #f1f5f9;
+  --color-earth-150: #e2e8f0;
+  --color-earth-200: #cbd5e1;
+  --color-earth-300: #94a3b8;
+  --color-earth-400: #64748b;
+  --color-earth-450: #475569;
+  --color-earth-455: #334155;
+  --color-earth-500: #334155;
+  --color-earth-700: #1e293b;
+  --color-earth-800: #0f172a;
+  --color-earth-850: #0f172a;
+  --color-earth-900: #020617;
+  --color-earth-950: #020617;
 
   --color-accent-gold: #f59e0b;
   --color-accent-amber: #d97706;
 
-  --color-earth-650: #625c56;
+  --color-earth-650: #1e293b;
   --color-blue-650: #2563eb;
 }
 
